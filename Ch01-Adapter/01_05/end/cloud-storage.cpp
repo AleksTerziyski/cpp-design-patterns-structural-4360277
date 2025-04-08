@@ -3,6 +3,8 @@
 #include <memory>
 #include <ctime>
 
+
+
 using namespace std;
 
 class CloudStorage
@@ -65,6 +67,38 @@ public:
     const int totalSpace = 15;
 };
 
+
+class VirtualDriveAdapter : public CloudStorage, private VirtualDrive
+{
+
+public:
+    bool uploadContents(const string& content) override
+    {
+        int unique_ID=generateUID();
+        cout << "Uploading " << content.length() << " bytes to VirtualDrive: " << endl;
+        return uploadData(content,unique_ID);
+    }
+
+    int getFreeSpace() override
+    {
+        // Implement the logic for getting the free space on CloudDrive here.
+        const int size = totalSpace - usedSpace();
+        cout << "Available VirtualDrive storage: " << size << "GB" << endl;
+        return size;
+    }
+
+private:
+    // generates an ID from seconds passed since Epoch
+    int generateUID()
+    {
+        // seconds since the Epoch
+        const time_t result = time(nullptr);        
+        return result;
+    }
+
+};
+
+
 int main()
 {
     // Create an array of pointers to CloudStorage objects.
@@ -72,6 +106,7 @@ int main()
     {
         std::make_unique<CloudDrive>(),
         std::make_unique<FastShare>(),
+        std::make_unique<VirtualDriveAdapter>(),
     };
 
     // Iterate through the array and invoke the uploadContents and getFreeSpace
