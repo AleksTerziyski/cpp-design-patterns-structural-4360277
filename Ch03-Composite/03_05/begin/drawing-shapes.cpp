@@ -66,6 +66,7 @@ class CompositeShape: public Shape
 public:
     void draw() const override
     {
+        cout << "Drawing a composite shape:" << endl;
         for(const auto &shape : m_Shapes)
         {
             shape->draw();
